@@ -1,0 +1,3 @@
+TODO 
+. deliver! does not inform interceptors
+. does not sanitize bcc/cc fields
