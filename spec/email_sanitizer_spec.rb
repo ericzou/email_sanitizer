@@ -42,14 +42,28 @@ describe EmailSanitizer do
     end
   end
 
-  it "should work as advertised" do 
-    ActionMailer::Base.delivery_method = :test
-    EmailSanitizer.base_email = "default@example.com"
-    email = TestMailer.notification
-    email.to.should == ["foo@bar.com"]
-    email.deliver
-    email.to.should == ["default+foo_at_bar.com@example.com"]
+  describe "usage" do 
+    before(:each) do 
+      ActionMailer::Base.delivery_method = :test
+      EmailSanitizer.base_email = "default@example.com"
+      @email = TestMailer.notification
+      @email.to.should == ["foo@bar.com"]
+    end
+
+    it "should work as advertised when calling .deliver!" do
+      @email.deliver
+      @email.to.should == ["default+foo_at_bar.com@example.com"]
+    end
+
+    # This will be fixed in Mail gem soon
+    # it "should work as advertised when calling through .delvier!" do 
+    #   @email.deliver!
+    #   @email.to.should == ["default+foo_at_bar.com@example.com"]
+    # end
   end
+  
+
+
   
 end
 
