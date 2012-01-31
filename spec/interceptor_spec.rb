@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'email_sanitizer'
 
 describe EmailSanitizer::Interceptor do 
   describe "#delivering_email" do 

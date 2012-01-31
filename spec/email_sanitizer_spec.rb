@@ -40,6 +40,30 @@ describe EmailSanitizer do
       EmailSanitizer.base_email = 'default@example.com'
       EmailSanitizer.sanitize(["foo@bar.com", "abc@example.com"]).should == ["default+foo_at_bar.com@example.com", 'default+abc_at_example.com@example.com']
     end
+
+    it "should be able to handle email such as 'support+foo@bar.com'" do 
+      EmailSanitizer.base_email = 'default@example.com'
+      EmailSanitizer.sanitize(["support+foo@bar.com"]).should == ["default+support+foo_at_bar.com@example.com"]
+    end
+  end
+
+  describe "#sanitized?" do 
+    it "should return true " do 
+      EmailSanitizer.base_email = "test@example.com"
+      EmailSanitizer.send(:sanitized?, "test+foo_at_bar.com@example.com").should be_true
+    end
+
+    it "should return false " do 
+      EmailSanitizer.send(:sanitized?, "foo@bar.com").should be_false
+      EmailSanitizer.send(:sanitized?, "foo+test.com@bar.com").should be_false
+    end
+  end
+
+  describe "#unsanitize" do 
+    it "should undo sanitize" do 
+      email = "test+foo_at_bar.com@example.com"
+      EmailSanitizer.unsanitize(email).should == ['foo@bar.com']
+    end
   end
 
   describe "usage" do 
@@ -50,20 +74,13 @@ describe EmailSanitizer do
       @email.to.should == ["foo@bar.com"]
     end
 
-    it "should work as advertised when calling .deliver!" do
+    it "should not change email addresses after deliver" do
+      b = @email.to
       @email.deliver
-      @email.to.should == ["default+foo_at_bar.com@example.com"]
+      @email.to.should == b
     end
-
-    # This will be fixed in Mail gem soon
-    # it "should work as advertised when calling through .delvier!" do 
-    #   @email.deliver!
-    #   @email.to.should == ["default+foo_at_bar.com@example.com"]
-    # end
+    
   end
-  
-
-
   
 end
 
