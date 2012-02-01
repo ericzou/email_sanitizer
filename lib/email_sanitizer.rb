@@ -31,7 +31,7 @@ module EmailSanitizer
     end
 
     def sanitized?(email_address)
-      email_address =~ /#{base_local}\+.+_at_.+@#{base_domain}/
+      email_address =~ /#{Regexp.escape(base_local)}\+.+_at_.+@#{base_domain}/
     end
 
     def do_sanitize(email_address)
@@ -41,7 +41,7 @@ module EmailSanitizer
 
     def do_unsanitize(email_address)
       return email_address unless sanitized?(email_address)
-      address = email_address.split(/#{base_local}\+|@/)[1]
+      address = email_address.split(/#{Regexp.escape(base_local)}\+|@/)[1]
       address.sub('_at_', '@')
     end
   end

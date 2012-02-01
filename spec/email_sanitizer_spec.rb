@@ -54,16 +54,28 @@ describe EmailSanitizer do
     end
 
     it "should return false " do 
+      EmailSanitizer.base_email = "test@example.com"
       EmailSanitizer.send(:sanitized?, "foo@bar.com").should be_false
       EmailSanitizer.send(:sanitized?, "foo+test.com@bar.com").should be_false
+    end
+
+    it "should support '+' format" do 
+      EmailSanitizer.base_email = "support+test@example.com"
+      EmailSanitizer.send(:sanitized?, "support+test+foo_at_bar.com@example.com").should be_true
     end
   end
 
   describe "#unsanitize" do 
     it "should undo sanitize" do 
-      email = "test+foo_at_bar.com@example.com"
-      EmailSanitizer.unsanitize(email).should == ['foo@bar.com']
+      EmailSanitizer.base_email = "test@example.com"
+      EmailSanitizer.unsanitize("test+foo_at_bar.com@example.com").should == ['foo@bar.com']
     end
+
+    it "should support '+' format" do 
+      EmailSanitizer.base_email = "support+test@example.com"
+      EmailSanitizer.unsanitize("support+test+foo_at_bar.com@example.com").should == ['foo@bar.com']
+    end
+
   end
 
   describe "usage" do 
